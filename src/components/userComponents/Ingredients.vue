@@ -24,9 +24,6 @@
 
 <script>
 export default {
-  props: {
-    data: this.ingredients
-  },
   data: function() {
     return {
       counter: 0,
@@ -36,13 +33,16 @@ export default {
     };
   },
   methods: {
+    setIng: function() {
+      this.$emit("setIng", this.ingredients);
+    },
     handleDelete(e) {
-      console.log(e.target.id);
       const elements = [...this.ingredients];
       const ingredients = elements.filter(
         id => id.id.toString() !== e.target.id
       );
       this.ingredients = ingredients;
+      this.setIng();
     },
     handleAdd(e) {
       e.preventDefault();
@@ -59,6 +59,7 @@ export default {
       this.counter = this.counter + 1;
       this.ingredients = [...this.ingredients, ingredient];
       this.text = "";
+      this.setIng();
     }
   }
 };

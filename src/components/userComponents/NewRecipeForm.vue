@@ -13,7 +13,7 @@
         placeholder="Name of the dish"
       />
     </div>
-    <app-ingredients :ingredients="data"></app-ingredients>
+    <app-ingredients v-on:setIng="updateIng($event)"></app-ingredients>
     <div class="form-group">
       <label for="description">Description (between 30 and 500 characters)</label>
       <textarea
@@ -43,7 +43,7 @@
       <label class="form-check-label" for="meat">Does the dish contain meat?</label>
     </div>
     <br />
-    <app-dropdown></app-dropdown>
+    <app-dropdown v-on:setCousine="updateCousine($event)"></app-dropdown>
     <div class="form-group">
       <label for="serving">Serving (between 1 and 20 characters)</label>
       <input
@@ -111,15 +111,16 @@ export default {
     appIngredients: Ingredients
   },
   methods: {
-    //     setIngredients(data) {
-    //       console.log(data);
-    //       let ingredients = [];
-    //       data.map(i => {
-    //         return ingredients.push(i.text);
-    //       });
-
-    //       this.ingredients = ingredients;
-    //     },
+    updateIng(data) {
+      let ingredients = [];
+      data.map(i => {
+        return ingredients.push(i.text);
+      });
+      this.ingredients = ingredients;
+    },
+    updateCousine(data) {
+      this.cousine = data;
+    },
     handleSubmit() {
       const token = window.localStorage.getItem("jwt-token");
       const config = {
