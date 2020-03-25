@@ -1,71 +1,136 @@
 <template>
   <div class="container">
     <br />
-    <div>
+    <div v-if="recipe === []" class="d-flex justify-content-center">
+      <div class="spinner-border" :style="{ width: '3rem', height: '3rem' }" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <div v-else>
       <div class="row">
-        <h1 class="p-3">name</h1>
+        <h1 class="p-3">{{recipe.name}}</h1>
       </div>
       <div class="row">
         <p class="p-3">
-          <strong>Description:</strong>description
+          <strong>Description:</strong>
+          {{recipe.description}}
         </p>
       </div>
       <div class="row">
-        <img src id="img" class="rounded float-left m-auto" alt="{data.name}" />
+        <img
+          :src="'http://localhost:4000/uploads/' + recipe.photo"
+          :style="{width: '50%', height: '50%'}"
+          class="rounded float-left m-auto"
+          :alt="recipe.name"
+        />
         <div class="col">
           <ul class="list-group">
-            <li class="list-group-item list-group-item-primary">Calories: data.calories</li>
-            <li class="list-group-item list-group-item-info">Serving: data.serving</li>
-            <li class="list-group-item list-group-item-warning">Cousine: data.cousine</li>
-            <li class="list-group-item list-group-item-light">Time: data.time</li>
-            <li>Contains meat: yes</li>
+            <li class="list-group-item list-group-item-primary">Calories: {{recipe.calories}}</li>
+            <li class="list-group-item list-group-item-info">Serving: {{recipe.serving}}</li>
+            <li class="list-group-item list-group-item-warning">Cousine: {{recipe.cousine[0]}}</li>
+            <li class="list-group-item list-group-item-light">Time: {{recipe.time}}</li>
           </ul>
           <div class="stars-outer">
-            <div class="stars-inner"></div>
+            <div class="stars-inner" :style="{ width: stars(recipe.averageRating) }"></div>
           </div>
         </div>
       </div>
       <hr />
       <div class="row">
         <div class="col">
-          <ul class="list-group list-group-flush p-3"></ul>
+          <ul
+            class="list-group list-group-flush p-3"
+            v-for="item in recipe.ingredients"
+            :key="item"
+          >
+            <li class="list-group-item">{{item}}</li>
+          </ul>
         </div>
         <div class="col">
           <p>
-            <strong>Instruction:</strong>data.instructions
+            <strong>Instruction:</strong>
+            {{recipe.instructions}}
           </p>
         </div>
       </div>
       <hr />
-
-      <div class="card p-3 mb-2" key="{review._id}">
-        <div class="card-body">
-          <h3>review.title</h3>
-          <p>review.text</p>
-          <div class="stars-outer">
-            <div class="stars-inner"></div>
+      <div v-if="reviews === []">loading...</div>
+      <div v-else>
+        <h3>Reviews ({{reviews.length}})</h3>
+        <div
+          class="card p-3 mb-2"
+          v-for="review in reviews.sort((a, b) => {
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    })"
+          :key="review._id"
+        >
+          <div class="card-body">
+            <h3>{{review.title}}</h3>
+            <p>{{review.text}}</p>
+            <div class="stars-outer">
+              <div class="stars-inner" :style="{ width: stars(review.rating) }"></div>
+            </div>
+            <br />
+            <small>Created at: {{review.createdAt.slice(0, 10)}}</small>
+            <hr />
           </div>
-          <br />
-          <small>Created at: review.createdAt.slice(0, 10)</small>
-          <hr />
         </div>
       </div>
     </div>
+    <hr />
+    <br />
+    <app-add-review v-bind:data="recipe._id"></app-add-review>
   </div>
 </template>
 
 <script>
-export default {};
+import axios from "axios";
+import AddReview from "../components/reviewComponents/AddReview.vue";
+
+export default {
+  data: function() {
+    return {
+      recipe: [],
+      reviews: []
+    };
+  },
+  created() {
+    this.fetchRecipe();
+    this.fetchReview();
+  },
+  methods: {
+    stars(rating) {
+      let rate = rating * 20;
+      return `${rate}%`;
+    },
+    fetchRecipe: async function() {
+      await axios
+        .get(`http://localhost:4000/recipe/${this.$route.params.id}`)
+        .then(data => {
+          console.log("render1");
+          this.recipe = data.data.data;
+        })
+        .catch(err => console.log(err));
+    },
+    fetchReview: async function() {
+      await axios
+        .get(`http://localhost:4000/recipe/${this.$route.params.id}/reviews`)
+        .then(data => {
+          console.log("render2");
+          this.reviews = data.data.data;
+        })
+        .catch(err => console.log(err));
+    }
+  },
+  components: {
+    appAddReview: AddReview
+  }
+};
 </script>
 
-<style>
+<style scoped>
 .container {
   margin-top: 10vh;
-}
-
-#img {
-  width: 50%;
-  height: 50%;
 }
 
 .stars-outer {
