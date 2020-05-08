@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-export const fetchRecipes = ({ commit }) => {
+export const fetchRecipes = ({ commit }, url) => {
 
-    axios.get("http://localhost:4000/recipe")
+    axios.get(url)
         .then((data) =>
             commit('SET_RECIPES', data))
         .catch(err => console.error(err))

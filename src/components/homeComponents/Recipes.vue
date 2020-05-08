@@ -6,43 +6,31 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div v-else v-for="item in recipes.data.data" v-bind:key="item._id">
-        <div class="col mt-6 p-3">
-          <div class="card m-auto" :style="{ width: '15rem' }">
+      <div v-else v-for="item in recipes.data.data" v-bind:key="item._id" class="col mt-6 p-3">
+        <div class="card m-auto" :style="{ width: '15rem' }">
+          <router-link :to="`recipe/${item._id}`">
+            <img
+              :src="'http://localhost:4000/uploads/' + item.photo"
+              class="card-img-top"
+              :style="{ height: '16rem' }"
+              :alt="item.name"
+            />
+          </router-link>
+          <div class="card-body">
             <router-link :to="`recipe/${item._id}`">
-              <img
-                :src="'http://localhost:4000/uploads/' + item.photo"
-                class="card-img-top"
-                :style="{ height: '16rem' }"
-                :alt="item.name"
-              />
+              <h5 class="card-title">{{item.name}}</h5>
             </router-link>
-            <div class="card-body">
-              <router-link :to="`recipe/${item._id}`">
-                <h5 class="card-title">{{item.name}}</h5>
-              </router-link>
-              <div class="stars-outer">
-                <div class="stars-inner" :style="{ width: 'stars(item.averageRating)' }"></div>
-              </div>
+            <div class="stars-outer">
+              <div class="stars-inner" :style="{ width: stars(item.averageRating) }"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div>
-      <div>{{len}}</div>
-      <!-- <div className="row mt-4 " style={{ fontSize: "36px" }}>
-                <p className=" m-auto">Unfortunately: 0 results</p>
-            </div>
-        ) : (
-
-            <div className="row mt-4 " style={{ fontSize: "36px" }}>
-                <i className=" ml-auto fas fa-arrow-circle-left m-2 text-secondary" style={{ cursor: "pointer" }} onClick={props.clickPrev
-                }></i>
-                <p >{props.page}</p>
-                <i className=" mr-auto fas fa-arrow-circle-right m-2 text-secondary" style={{ cursor: "pointer" }} onClick={props.clickNext
-                }></i>
-      </div>-->
+      <div v-if="len.length==0" class="row mt-4" style="font-size: 36px ">
+        <p class="m-auto">Unfortunately: 0 results</p>
+      </div>
     </div>
   </div>
 </template>
@@ -61,6 +49,12 @@ export default {
       return {
         length: this.recipes === null ? -1 : this.recipes.data.count
       };
+    }
+  },
+  methods: {
+    stars(rating) {
+      let rate = rating * 20;
+      return `${rate}%`;
     }
   }
 };

@@ -48,13 +48,10 @@ export default {
       e.preventDefault();
       axios
         .get("http://localhost:4000/auth/logout")
-        .then(function(response) {
-          console.log(response);
-        })
         .then(() => {
+          window.location.reload();
           window.localStorage.removeItem("jwt-token");
           this.$router.push("/");
-          window.location.reload();
         })
         .catch(function(error) {
           console.error(error);

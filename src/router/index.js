@@ -18,18 +18,6 @@ const routes = [
     component: Home
   },
   {
-    path: '/name_:name',
-    name: 'Home',
-    component: Home,
-    props: true
-  },
-  {
-    path: '/cousine_:cousine',
-    name: 'Home',
-    component: Home,
-    props: true
-  },
-  {
     path: '/login',
     name: 'Login',
     component: Login
@@ -75,7 +63,6 @@ router.beforeEach((to, from, next) => {
         next({ name: "Home" })
       }
       else {
-        console.log("here")
         next()
       }
     } catch (err) {
